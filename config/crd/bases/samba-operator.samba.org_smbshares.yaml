@@ -85,6 +85,11 @@ spec:
                       description: MinClusterSize specifies the minimum number of smb server instances to establish when availabilityMode is "clustered".
                       type: integer
                   type: object
+                customConfig:
+                  properties:
+                    name:
+                      type: string
+                  type: object
                 securityConfig:
                   description: SecurityConfig specifies which SmbSecurityConfig CR is to be used for this share. If left blank, the operator's default will be used.
                   minLength: 1
