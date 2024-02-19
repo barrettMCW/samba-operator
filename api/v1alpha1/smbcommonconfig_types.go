@@ -38,6 +38,15 @@ type SmbCommonConfigSpec struct {
 	// under PodSettings allow admins and users to customize how pods
 	// are scheduled in a kubernetes cluster.
 	PodSettings *SmbCommonConfigPodSettings `json:"podSettings,omitempty"`
+
+	// SmbConf contains instance-wide smb.conf options
+	SmbConf SmbConf `json:"smbConf,omitempty"`
+}
+
+// SmbConf contains Samba configuration options
+type SmbConf struct {
+	// Options is a map of Samba configuration options
+	Options map[string]string `json:"options,omitempty"`
 }
 
 // SmbCommonNetworkSpec values define networking properties for the services
