@@ -40,6 +40,13 @@ spec:
                         - external
                       type: string
                   type: object
+                smbConf:
+                  type: object
+                  properties:
+                    options:
+                      type: object
+                      additionalProperties:
+                        type: string
                 podSettings:
                   description: PodSettings are configuration values that are applied to pods that the operator may create in order to host shares. The values specified under PodSettings allow admins and users to customize how pods are scheduled in a kubernetes cluster.
                   properties:
