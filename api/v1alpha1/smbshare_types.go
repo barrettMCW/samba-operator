@@ -67,16 +67,6 @@ type SmbShareSpec struct {
 	// Scaling specifies parameters relating to how share resources can and
 	// should be scaled.
 	Scaling *SmbShareScalingSpec `json:"scaling,omitempty"`
-
-	// CustomConfig specifies a configmap with smb configuration overrides
-	CustomConfig *SmbShareCustomConfig `json:"customConfig,omitempty`
-}
-
-// SmbShareCustomConfig defines a configmap with custom smb.conf keyvals
-type SmbShareCustomConfig struct {
-	// Name defines the configmap to get smb extra configurations from
-	//  + optional
-	Name string `json:"name,omitempty"`
 }
 
 // SmbShareStorageSpec defines how storage is associated with a share.
