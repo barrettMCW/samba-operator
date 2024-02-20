@@ -106,7 +106,7 @@ func (pl *Planner) ClusterSize() int32 {
 func (pl *Planner) Grouping() (GroupMode, string) {
 	mode := GroupModeUnset
 	groupName := ""
-	if pl.CommonConfig != nil && pl.CommonConfig.SmbConf != nil && pl.CommonConfig.SmbConf.Options != nil {
+	if pl.SmbShare.Spec.Scaling != nil  {
 		mode = GroupMode(pl.SmbShare.Spec.Scaling.GroupMode)
 		groupName = pl.SmbShare.Spec.Scaling.Group
 	}
@@ -123,10 +123,10 @@ func (pl *Planner) Grouping() (GroupMode, string) {
 	}
 }
 
-// GlobalCustomConf returns the custom configuration mapping
-func (pl *Planner) GlobalCustomConf() map[string]string {
-	if pl.CommonConfig.smbConf.options != nil {	
-		return pl.CommonConfig.SmbConf.options
-	}
-	return make(map[string]string)
+// GlobalCustomConf returns the custom configuration mapping and cr name
+func (pl *Planner) GlobalCustomConf() (string, map[string]string) {
+    if pl.SmbShare.Spec.CommonConfig != nil && pl.CommonConfig.Spec.SmbConf != nil && pl.CommonConfig.Spec.SmbConf.Options != nil {
+        return pl.SmbShare.Spec.CommonConfig, pl.CommonConfig.SmbConf.Options
+    }
+    return "", make(map[string]string)
 }
