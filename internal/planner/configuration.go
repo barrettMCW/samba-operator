@@ -144,13 +144,26 @@ func (pl *Planner) Update() (changed bool, err error) {
 			changed = true
 		}
 	}
-	// Retrieve and update the global custom configurations
-	globalCustomConf := pl.GlobalCustomConf()
-	for key, value := range globalCustomConf {
-	if existingValue, found := pl.ConfigState.Globals[smbcc.Globals].Options[key]; !found || existingValue != value {
-	    pl.ConfigState.Globals[smbcc.Globals].Options[key] = value
-	    changed = true
-	}
+	smbCommonConfigName, globalCustomConf := pl.GlobalCustomConf()
+	if smbCommonConfigName != "" {
+	    if _, found := pl.ConfigState.Globals[smbCommonConfigName]; !found {
+	        // Create a new GlobalConfig for the smbCommonConfigName if it doesn't exist
+	        globalOptions := smbcc.NewGlobalOptions()
+	        for key, value := range globalCustomConf {
+	            globalOptions[key] = value
+	        }
+	        globals := smbcc.NewGlobals(globalOptions)
+	        pl.ConfigState.Globals[smbCommonConfigName] = globals
+	        changed = true
+	    } else {
+	        // Update the existing GlobalConfig with the new options
+	        for key, value := range globalCustomConf {
+	            if existingValue, found := pl.ConfigState.Globals[smbCommonConfigName].Options[key]; !found || existingValue != value {
+	                pl.ConfigState.Globals[smbCommonConfigName].Options[key] = value
+	                changed = true
+	            }
+	        }
+	    }
 	}
 	return
 }
