@@ -144,6 +144,14 @@ func (pl *Planner) Update() (changed bool, err error) {
 			changed = true
 		}
 	}
+	// Retrieve and update the global custom configurations
+	globalCustomConf := pl.GlobalCustomConf()
+	for key, value := range globalCustomConf {
+	if existingValue, found := pl.ConfigState.Globals[smbcc.Globals].Options[key]; !found || existingValue != value {
+	    pl.ConfigState.Globals[smbcc.Globals].Options[key] = value
+	    changed = true
+	}
+	}
 	return
 }
 
