@@ -40,7 +40,7 @@ type SmbCommonConfigSpec struct {
 	PodSettings *SmbCommonConfigPodSettings `json:"podSettings,omitempty"`
 
 	// SmbConf contains instance-wide smb.conf options
-	SmbConf SmbConf `json:"smbConf,omitempty"`
+	SmbConf *SmbConf `json:"smbConf,omitempty"`
 }
 
 // SmbConf contains Samba configuration options

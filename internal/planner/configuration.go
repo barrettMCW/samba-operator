@@ -99,12 +99,44 @@ func (pl *Planner) Update() (changed bool, err error) {
 	if c := applyShareValues(share, pl.SmbShare.Spec); c {
 		changed = true
 	}
+	smbCommonConfigName, globalCustomConf := pl.GlobalCustomConf()
+	smbCommonConfigKey := smbcc.Key(smbCommonConfigName)
+	if smbCommonConfigName != "" {
+	    if _, found := pl.ConfigState.Globals[smbCommonConfigKey]; !found {
+	        // Create a new GlobalConfig for the smbCommonConfigKey if it doesn't exist
+	        globalOptions := smbcc.SmbOptions(globalCustomConf)
+			cfg := smbcc.GlobalConfig{
+				Options: globalOptions,
+			}
+	        pl.ConfigState.Globals[smbCommonConfigKey] = cfg
+	        changed = true
+	    } else {
+	        // Update the existing GlobalConfig with the new options
+	        for key, value := range globalCustomConf {
+	            if existingValue, found := pl.ConfigState.Globals[smbCommonConfigKey].Options[key]; !found || existingValue != value {
+	                pl.ConfigState.Globals[smbCommonConfigKey].Options[key] = value
+	                changed = true
+	            }
+	        }
+	    }
+	}
 	cfgKey := pl.instanceID()
 	cfg, found := pl.ConfigState.Configs[cfgKey]
 	if !found {
+		var globals []smbcc.Key
+
+		// Always include the default globals key
+		globals = append(globals, smbcc.Globals)
+
+		// Conditionally include the common config key if defined
+		if smbCommonConfigName != "" {
+			globals = append(globals, smbCommonConfigKey)
+		}
+
+		// Create the config section with the updated globals slice
 		cfg = smbcc.ConfigSection{
 			Shares:       []smbcc.Key{shareKey},
-			Globals:      []smbcc.Key{smbcc.Globals},
+			Globals:      globals,
 			InstanceName: pl.InstanceName(),
 			Permissions:  smbcc.NewPermissionsConfig(),
 		}
@@ -143,27 +175,6 @@ func (pl *Planner) Update() (changed bool, err error) {
 			}
 			changed = true
 		}
-	}
-	smbCommonConfigName, globalCustomConf := pl.GlobalCustomConf()
-	if smbCommonConfigName != "" {
-	    if _, found := pl.ConfigState.Globals[smbCommonConfigName]; !found {
-	        // Create a new GlobalConfig for the smbCommonConfigName if it doesn't exist
-	        globalOptions := smbcc.NewGlobalOptions()
-	        for key, value := range globalCustomConf {
-	            globalOptions[key] = value
-	        }
-	        globals := smbcc.NewGlobals(globalOptions)
-	        pl.ConfigState.Globals[smbCommonConfigName] = globals
-	        changed = true
-	    } else {
-	        // Update the existing GlobalConfig with the new options
-	        for key, value := range globalCustomConf {
-	            if existingValue, found := pl.ConfigState.Globals[smbCommonConfigName].Options[key]; !found || existingValue != value {
-	                pl.ConfigState.Globals[smbCommonConfigName].Options[key] = value
-	                changed = true
-	            }
-	        }
-	    }
 	}
 	return
 }

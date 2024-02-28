@@ -125,7 +125,7 @@ func (pl *Planner) Grouping() (GroupMode, string) {
 
 // GlobalCustomConf returns the custom configuration mapping and cr name
 func (pl *Planner) GlobalCustomConf() (string, map[string]string) {
-    if pl.SmbShare.Spec.CommonConfig != nil && pl.CommonConfig.Spec.SmbConf != nil && pl.CommonConfig.Spec.SmbConf.Options != nil {
+    if pl.SmbShare.Spec.CommonConfig != "" && pl.CommonConfig.Spec.SmbConf != nil && pl.CommonConfig.Spec.SmbConf.Options != nil {
         return pl.SmbShare.Spec.CommonConfig, pl.CommonConfig.Spec.SmbConf.Options
     }
     return "", make(map[string]string)
